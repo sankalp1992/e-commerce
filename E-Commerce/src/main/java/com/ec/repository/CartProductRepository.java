@@ -16,4 +16,7 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Intege
     @Query(value = "select * from ec_cart_products, ec_cart where cart_id = cart_products_cart_id and cart_products_cart_id = ?1 and cart_products_products_id = ?2 and ec_cart_products.status = 1;", nativeQuery = true)
     public CartProduct findProductsByCartIdAdProductId(int cartId, int productId);
 
+    @Query(value = "select * from ec_cart_products where cart_products_cart_id = ?1 and ec_cart_products.status = 1;", nativeQuery = true)
+    public List<CartProduct> findByCartId(Integer cartId);
+
 }

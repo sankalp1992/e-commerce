@@ -85,7 +85,7 @@ Response :
 }
 
 *********************************Add To Cart************************************
-API Description	: This API will add the product to the user's cart. It cart containt that product then it will add newly received quantity. If Product's 			  available quantity id exceeded than the selected quantity then API will return an error. It will also update the total price in cart whenever 			  new product added or existing product updated in cart.
+API Description	: This API will add the product to the user's cart. It cart containt that product then it will update newly received quantity. If Product's 			  available quantity id exceeded than the selected quantity then API will return an error. It will also update the total price in cart whenever 			  new product added or existing product updated in cart.
 URL 		: http://localhost:8080/addToCart
 Method 		: POST
 Request :

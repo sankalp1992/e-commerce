@@ -8,11 +8,14 @@ package com.ec.service.impl;
 import com.ec.repository.CartRepository;
 import com.ec.request.OrderPaymentRequest;
 import com.ec.model.*;
+import com.ec.repository.CartProductRepository;
 import com.ec.repository.OrderRepository;
 import com.ec.repository.PaymentsRepository;
+import com.ec.repository.ProductRepository;
 import com.ec.repository.UserRepository;
 import com.ec.response.CommonResponse;
 import com.ec.service.OrderPaymentService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +37,12 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CartProductRepository cartProductRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public CommonResponse orderAndPayment(OrderPaymentRequest orderPaymentRequest) {
@@ -59,6 +68,19 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
                     payments.setPaymentTotal(cart.getCartTotalPrice());
                     payments.setStatus(true);
                     paymentsRepository.save(payments);
+
+                    //Update the product quantity and cart
+                    List<CartProduct> cartProductList = cartProductRepository.findByCartId(cart.getCartId());
+                    for (CartProduct cartProduct : cartProductList) {
+                        cartProduct.setStatus(false);
+                        cartProductRepository.save(cartProduct);
+
+                        cartProduct.getProduct().setProductAvailableQauntity(cartProduct.getProduct().getProductAvailableQauntity() - cartProduct.getProductQuantity());
+                        productRepository.save(cartProduct.getProduct());
+                    }
+                    cart.setCartTotalPrice(0);
+                    cartRepository.save(cart);
+
                 } else {
                     commonResponse = new CommonResponse(3008, "Failed to place order. Payment failure!! Please try again.");
                 }
