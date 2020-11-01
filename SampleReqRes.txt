@@ -1,0 +1,162 @@
+*************************Add Update Product*******************************
+API Description 	: This API add or update the existing product. If uniqueId sent in request exists in DB then it will update the quantity else it will add 			  the new product. Response will be base response with success and failed product uniqueId.
+URL 			: http://localhost:8080/addProduct
+Method 			: POST
+Content-Type		: application/json
+
+Request : 
+
+{
+  "accessToken": "abc",
+  "sellerId": 1,
+  "productList": [
+    {
+      "uniqueId": "P-10000",
+      "name": "TV",
+      "price": 20000,
+      "details": "4K TV",
+      "availQuantity": 5,
+      "rating": 5
+    },
+    {
+      "uniqueId": "P-20000",
+      "name": "Laptop",
+      "price": 40000,
+      "details": "8 GB RAM, 256 GB SSD, 1 TB HDD, Intel i3 Processor",
+      "availQuantity": 10,
+      "rating": 4.5
+    }
+  ]
+}
+
+Response : 
+
+{
+  "response": {
+    "code": 2001,
+    "message": "Request processed"
+  },
+  "successIds": [
+    "P-10000",
+    "P-20000"
+  ],
+  "failedIds": []
+}
+
+
+
+*********************************listProducts************************************
+API Description 			: This will fetch all the product present in DB. Access token is optional as it is hardcoded in code. Response will be 						  list of products with its detailed information.
+URL 					: http://localhost:8080/listProduct
+Method 					: GET
+Request(Request Parameter) (Optional)	: accessToken
+
+Response :
+
+{
+  "response": {
+    "code": 2000,
+    "message": "Product list fetched successfully"
+  },
+  "data": [
+    {
+      "id": 1,
+      "sellerId": 1,
+      "sellerName": "Test Seller",
+      "uniqueId": "P-10000",
+      "name": "TV",
+      "price": 20000,
+      "details": "V",
+      "availQuantity": 5,
+      "rating": 5
+    },
+    {
+      "id": 2,
+      "sellerId": 1,
+      "sellerName": "Test Seller",
+      "uniqueId": "P-20000",
+      "name": "Laptop",
+      "price": 40000,
+      "details": "8 GB RAM, 256 GB SSD, 1 TB HDD, Intel i3 Processor",
+      "availQuantity": 10,
+      "rating": 4.5
+    }
+  ]
+}
+
+*********************************Add To Cart************************************
+API Description	: This API will add the product to the user's cart. It cart containt that product then it will add newly received quantity. If Product's 			  available quantity id exceeded than the selected quantity then API will return an error. It will also update the total price in cart whenever 			  new product added or existing product updated in cart.
+URL 		: http://localhost:8080/addToCart
+Method 		: POST
+Request :
+{
+  "accessToken": "abc",
+  "uniqueId": "P-10000",
+  "quantity": 2
+}
+
+
+Response : 
+Success : 
+{
+  "response": {
+    "code": 2004,
+    "message": "Product added to cart successfully"
+  }
+}
+
+Error or Quantity exceeds
+{
+  "response": {
+    "code": 3004,
+    "message": "Quantity can not exceeds than available"
+  }
+}
+
+*********************************Order and Payment************************************
+API Description	: In this API it is assumed that the payment is done using third party serive. So API request contains the paymentStatus. Depending upon this 			  status API will be processed. It should be success to process the order. Rest all parameters are required. Order will be placed for the use who 			  is logged in user identified by access token(right now it is hardcoded).
+
+URL 		: http://localhost:8080/orderAndPayment
+Method 		: POST
+
+Request : 
+{
+  "accessToken": "abc",
+  "deliveryAddress": "Test address",
+  "orderDate": "2020-01-31 00:00:00",
+  "orderEta": "2020-02-05 00:00:00",
+  "paymentStatus": "Success",
+  "paymentOption": "Card",
+  "paymentDate": "2020-01-31 00:00:00"
+}
+
+Response : 
+Success : 
+{
+  "response": {
+    "code": 2005,
+    "message": "Order placed successfully"
+  }
+}
+
+Error:
+{
+  "response": {
+    "code": 3008,
+    "message": "Failed to place order. Payment failure!! Please try again."
+  }
+}
+
+{
+  "response": {
+    "code": 3006,
+    "message": "Cart not found"
+  }
+}
+
+{
+  "response": {
+    "code": 3007,
+    "message": "User not found"
+  }
+}
